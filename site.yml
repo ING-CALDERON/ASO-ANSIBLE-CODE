@@ -1,0 +1,9 @@
+---
+- name: Despliegue de servidor LAMP y Samba
+  hosts: servidores
+  become: yes
+  roles:
+    - apache
+    - mariadb
+    - phpmyadmin
+    - samba

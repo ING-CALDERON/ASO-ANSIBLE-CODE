@@ -1,0 +1,2 @@
+[servidores]
+192.168.1.70 ansible_user=root

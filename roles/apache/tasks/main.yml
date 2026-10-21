@@ -1,0 +1,20 @@
+---
+- name: Instalar Apache y módulos de PHP (Optimizado)
+  zypper:
+    name: 
+      - apache2
+      - php8
+      - apache2-mod_php8
+      - php8-mysql
+    state: present
+
+- name: Habilitar el módulo PHP en Apache
+  command: a2enmod php8
+  ignore_errors: yes
+  notify: Reiniciar Apache
+
+- name: Iniciar y habilitar el servicio de Apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes

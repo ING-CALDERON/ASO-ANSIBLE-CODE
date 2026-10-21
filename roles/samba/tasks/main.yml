@@ -1,0 +1,43 @@
+---
+- name: Instalar paquetes de Samba
+  zypper:
+    name: 
+      - samba
+      - samba-client
+    state: present
+
+- name: Crear grupo smbgroup
+  group:
+    name: smbgroup
+    state: present
+
+- name: Crear usuario del sistema para Samba (sin acceso a shell)
+  user:
+    name: smbuser
+    group: smbgroup
+    shell: /sbin/nologin
+    create_home: no
+
+- name: Asignar contraseña al usuario Samba
+  shell: (echo "{{ pass_general }}"; echo "{{ pass_general }}") | smbpasswd -s -a smbuser
+  no_log: true
+
+- name: Crear directorio compartido
+  file:
+    path: /opt/recurso_samba
+    state: directory
+    owner: smbuser
+    group: smbgroup
+    mode: '0775'
+
+- name: Desplegar archivo de configuración de Samba
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+  notify: Reiniciar Samba
+
+- name: Iniciar y habilitar el servicio Samba
+  service:
+    name: smb
+    state: started
+    enabled: yes

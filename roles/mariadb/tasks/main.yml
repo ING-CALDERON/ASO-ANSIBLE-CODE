@@ -1,0 +1,13 @@
+---
+- name: Instalar servidor y cliente de MariaDB
+  zypper:
+    name: 
+      - mariadb
+      - mariadb-client
+    state: present
+
+- name: Iniciar y habilitar el servicio MariaDB
+  service:
+    name: mariadb
+    state: started
+    enabled: yes

@@ -1,0 +1,20 @@
+---
+- name: Instalar PhpMyAdmin
+  zypper:
+    name: phpMyAdmin
+    state: present
+
+- name: Crear archivo de configuracion de PhpMyAdmin para Apache
+  copy:
+    dest: /etc/apache2/conf.d/phpMyAdmin.conf
+    content: |
+      Alias /phpMyAdmin /usr/share/phpMyAdmin
+      Alias /phpmyadmin /usr/share/phpMyAdmin
+
+      <Directory /usr/share/phpMyAdmin>
+          Options FollowSymLinks
+          DirectoryIndex index.php
+          AllowOverride All
+          Require all granted
+      </Directory>
+  notify: Reiniciar Apache
