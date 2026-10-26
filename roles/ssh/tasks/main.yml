@@ -1,0 +1,38 @@
+
+---
+- name: Instalar OpenSSH
+  ansible.builtin.zypper:
+    name: openssh
+    state: present
+  retries: 3
+  delay: 10
+
+- name: Crear configuración administrada por Ansible
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/00-ansible.conf
+    owner: root
+    group: root
+    mode: '0600'
+    content: |
+      PermitRootLogin yes
+      PasswordAuthentication yes
+      PubkeyAuthentication yes
+      KbdInteractiveAuthentication yes
+      UsePAM yes
+  notify: Reiniciar SSH
+
+- name: Validar configuración de SSH
+  ansible.builtin.command:
+    argv:
+      - /usr/sbin/sshd
+      - -t
+      - -f
+      - /usr/etc/ssh/sshd_config
+  changed_when: false
+
+- name: Iniciar y habilitar SSH
+  ansible.builtin.service:
+    name: sshd
+    state: started
+    enabled: true
+

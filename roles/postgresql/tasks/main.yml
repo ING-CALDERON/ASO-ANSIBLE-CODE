@@ -1,0 +1,47 @@
+
+---
+- name: Instalar PostgreSQL y modulo PHP para PostgreSQL
+  zypper:
+    name:
+      - postgresql-server
+      - postgresql-contrib
+      - php8-pgsql
+    state: present
+
+- name: Comprobar si PostgreSQL ya esta inicializado
+  stat:
+    path: /var/lib/pgsql/data/PG_VERSION
+  register: postgres_data
+
+- name: Inicializar PostgreSQL si no existe la base de datos
+  command: /usr/lib/postgresql18/bin/initdb -D /var/lib/pgsql/data
+  become_user: postgres
+  when: not postgres_data.stat.exists
+
+- name: Iniciar y habilitar el servicio de PostgreSQL
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Permitir conexiones remotas en postgresql.conf
+  lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^#?listen_addresses\\s*="
+    line: "listen_addresses = '*'"
+  notify: Reiniciar PostgreSQL
+
+- name: Configurar control de acceso remoto (pg_hba.conf)
+  template:
+    src: pg_hba.conf.j2
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  notify: Reiniciar PostgreSQL
+
+- name: Crear usuario y base de datos de PostgreSQL con la clave vault
+  shell: |
+    su - postgres -c "psql -tc \"SELECT 1 FROM pg_roles WHERE rolname='smbuser'\" | grep -q 1 || psql -c \"CREATE USER smbuser WITH PASSWORD '{{ pass_general }}';\""
+    su - postgres -c "psql -tc \"SELECT 1 FROM pg_database WHERE datname='app_db'\" | grep -q 1 || psql -c \"CREATE DATABASE app_db OWNER smbuser;\""
+

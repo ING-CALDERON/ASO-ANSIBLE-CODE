@@ -1,0 +1,22 @@
+---
+- name: Instalar vsftpd
+  zypper:
+    name: vsftpd
+    state: present
+  retries: 3
+  delay: 10
+
+- name: Copiar archivo de configuracion vsftpd
+  copy:
+    src: vsftpd.conf
+    dest: /etc/vsftpd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reiniciar vsftpd
+
+- name: Iniciar y habilitar el servicio vsftpd
+  service:
+    name: vsftpd
+    state: started
+    enabled: yes

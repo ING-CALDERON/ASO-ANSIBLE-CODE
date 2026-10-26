@@ -1,2 +1,2 @@
 [servidores]
-192.168.1.70 ansible_user=root
+192.168.1.11 ansible_user=root ansible_password=mundolibre ansible_ssh_extra_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
