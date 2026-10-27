@@ -564,18 +564,6 @@ El despliegue se considera validado cuando:
 
 No se debe afirmar que un servicio funciona únicamente porque su paquete esté instalado o su proceso esté activo. Hay que realizar las pruebas funcionales correspondientes.
 
-## 18. ACTUALIZACIÓN Y PUBLICACIÓN DEL PROYECTO
 
-Antes de publicar la versión final:
-
-- Revisar los archivos del proyecto.
-- Confirmar la ubicación de `site.yml`, los roles y el inventario.
-- Incluir los archivos de configuración necesarios.
-- Mantener protegidos los archivos y las variables de Vault.
-- Excluir credenciales, claves privadas y archivos temporales.
-- Actualizar este README con los comandos y las rutas realmente utilizados.
-- Probar las instrucciones desde una máquina clonada limpia.
-
-La documentación final debe permitir que otra persona comprenda los requisitos, prepare SSH, configure el inventario, gestione Vault, ejecute el playbook y compruebe los servicios desplegados.
 
 **Fin del README.**
